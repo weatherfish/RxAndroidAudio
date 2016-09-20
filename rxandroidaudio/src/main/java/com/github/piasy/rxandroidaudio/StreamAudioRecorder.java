@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class StreamAudioRecorder {
     private static final String TAG = "StreamAudioRecorder";
-    public static final int DEFAULT_SAMPLE_RATE = 16000;
+    public static final int DEFAULT_SAMPLE_RATE = 44100;
     public static final int DEFAULT_BUFFER_SIZE = 2048;
 
     private ExecutorService mExecutorService;
@@ -133,7 +133,7 @@ public final class StreamAudioRecorder {
         }
 
         private byte[] short2byte(short[] sData, int size, byte[] bData) {
-            if (size >= sData.length || size * 2 >= bData.length) {
+            if (size > sData.length || size * 2 > bData.length) {
                 Log.w(TAG, "short2byte: too long short data array");
             }
             for (int i = 0; i < size; i++) {
