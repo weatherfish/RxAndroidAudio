@@ -5,7 +5,10 @@ import android.media.AudioManager;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.RawRes;
+import android.text.TextUtils;
 import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by Piasy{github.com/Piasy} on 16/4/11.
@@ -13,10 +16,7 @@ import java.io.File;
 public class PlayConfig {
     static final int TYPE_FILE = 1;
     static final int TYPE_RES = 2;
-
-    @IntDef(value = { TYPE_FILE, TYPE_RES })
-    public @interface Type {
-    }
+    static final int TYPE_URL = 3;
 
     @PlayConfig.Type
     final int mType;
@@ -27,6 +27,8 @@ public class PlayConfig {
     final int mAudioResource;
 
     final File mAudioFile;
+
+    final String mUrl;
 
     final int mStreamType;
 
@@ -47,6 +49,7 @@ public class PlayConfig {
         mLooping = builder.mLooping;
         mLeftVolume = builder.mLeftVolume;
         mRightVolume = builder.mRightVolume;
+        mUrl = builder.mUrl;
     }
 
     public static Builder file(File file) {
@@ -56,12 +59,37 @@ public class PlayConfig {
         return builder;
     }
 
+    public static Builder url(String url) {
+        Builder builder = new Builder();
+        builder.mUrl = url;
+        builder.mType = TYPE_URL;
+        return builder;
+    }
+
     public static Builder res(Context context, @RawRes int audioResource) {
         Builder builder = new Builder();
         builder.mContext = context;
         builder.mAudioResource = audioResource;
         builder.mType = TYPE_RES;
         return builder;
+    }
+
+    public boolean isArgumentValid() {
+        switch (mType) {
+            case TYPE_FILE:
+                return mAudioFile != null && mAudioFile.exists();
+            case TYPE_RES:
+                return mAudioResource > 0 && mContext != null;
+            case TYPE_URL:
+                return !TextUtils.isEmpty(mUrl);
+            default:
+                return false;
+        }
+    }
+
+    @IntDef(value = { TYPE_FILE, TYPE_RES, TYPE_URL })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Type {
     }
 
     public static class Builder {
@@ -75,6 +103,8 @@ public class PlayConfig {
         int mAudioResource;
 
         File mAudioFile;
+
+        String mUrl;
 
         int mStreamType = AudioManager.STREAM_MUSIC;
 
