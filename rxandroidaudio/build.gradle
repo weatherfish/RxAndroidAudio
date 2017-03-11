@@ -1,5 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
 apply from: "https://raw.githubusercontent.com/Piasy/BintrayUploadScript/master/bintray.gradle"
+
+
 
 android {
     compileSdkVersion rootProject.ext.androidCompileSdkVersion
@@ -18,9 +21,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     compile "com.android.support:support-annotations:${rootProject.ext.androidSupportSdkVersion}"
-    compile 'io.reactivex:rxjava:1.2.3'
+    compile "io.reactivex.rxjava2:rxjava:${rootProject.ext.rxJava2Version}"
 }
